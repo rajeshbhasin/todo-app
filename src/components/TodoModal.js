@@ -32,7 +32,7 @@ const dropIn = {
 };
 
 function TodoModal({ type, modalOpen, setModalOpen, todo }) {
-  const [title, setTitle] = useState();
+  const [title, setTitle] = useState('');
   const [status, setStatus] = useState('Incomplete');
 
   useEffect(() => {
@@ -41,13 +41,14 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
       setStatus(todo.status);
     } else {
       setTitle('');
-      setStatus('');
+      setStatus('Incomplete');
     }
   }, [type, todo, modalOpen]);
 
   const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
+    console.log(status);
     e.preventDefault();
     if (title === '') {
       toast.error('Please enter a title');
@@ -65,7 +66,8 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
         );
         toast.success('Task added successfully');
         setModalOpen(false);
-      } else {
+      }
+      if (type === 'update') {
         console.log('Updating');
         if (todo.title !== title || todo.status !== status) {
           dispatch(
@@ -79,11 +81,11 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
           setModalOpen(false);
         } else {
           toast.error('Task wasnt changed');
+          return;
         }
       }
-    } else {
-      toast.error('Title should not be empty');
     }
+    setModalOpen(false);
   };
 
   return (
@@ -134,10 +136,10 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
                   }}
                 />
               </label>
-              <label htmlFor="status">
+              <label htmlFor="type">
                 Status
                 <select
-                  id="status"
+                  id="type"
                   value={status}
                   onChange={(e) => {
                     setStatus(e.target.value);
